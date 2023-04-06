@@ -8,7 +8,8 @@ from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
 from src.components.data_transformation import DataTransformation
-from src.components.data_transformation import DataTransformationFig
+from src.components.data_transformation import DataTransformationConfig
+
 
 @dataclass
 class DataIngestionConfig:

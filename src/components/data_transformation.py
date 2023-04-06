@@ -15,12 +15,12 @@ import os
 from src.utils import save_object
 
 @dataclass
-class DataTransformationFig:
+class DataTransformationConfig:
     preprocessor_obj_file_path = os.path.join('artifacts',"preprocessor.pkl")
 
 class DataTransformation:
     def __init__(self):
-        self.DataTransformationFig = DataTransformationFig()
+        self.data_transformation_config = DataTransformationConfig()
 
     def get_data_transformer_object(self):
         ''' 
@@ -32,25 +32,25 @@ class DataTransformation:
             categorical_feature = ["gender","race_ethnicity","parental_level_of_education","lunch","test_preparation_course"]
             num_pipeline = Pipeline(
                 steps=[
-                    ("impute",SimpleImputer(strategy="median")),
-                    ("scaler",StandardScaler())
+                ("impute",SimpleImputer(strategy="median")),
+                ("scaler",StandardScaler())
                 ]
             )
             cat_pipeline = Pipeline(
                 steps=[
-                    ("imputer",SimpleImputer(strategy="most_frequesnt")),
-                    ("one_hot_encoder",OneHotEncoder()),
-                    ("scaler",StandardScaler())
+                ("imputer",SimpleImputer(strategy=="most_frequent")),
+                ("one_hot_encoder",OneHotEncoder()),
+                ("scaler",StandardScaler())
                 ]
             )
 
-            logging.info("Categorical columns encoding completed")
-            logging.info("Numerical columns standard scaling completed")
+            logging.info(f"Categorical columns: {categorical_columns}")
+            logging.info(f"Numerical columns: {numerical_columns}")
 
             preprocessor = ColumnTransformer(
                 [
-               ("num_pipline",num_pipeline,numerical_feature),
-               ("cat_pipeline",cat_pipeline,categorical_feature)
+                ("num_pipline",num_pipeline,numerical_feature),
+                ("cat_pipeline",cat_pipeline,categorical_feature)
                 ]
             )
             return preprocessor
@@ -72,6 +72,9 @@ class DataTransformation:
             numerical_column = ["writing_score","reading_score"]
 
             input_feature_train_df = train_df.drop([target_column],axis=1)
+            target_feature_train_df=train_df[target_column]
+
+            input_feature_test_df=test_df.drop(columns=[target_column],axis=1)
             target_feature_test_df = test_df[target_column]
 
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe.")
